@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Caixa Eletrônico</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Simulador de Caixa Eletrônico</h1>
+
+        <h3 class="mb-4">Saldo: <span id="balance">R$ 0.00</span></h3>
+
+        <div class="form-group">
+            <label for="operation">Escolha uma operação:</label>
+            <select class="form-control" id="operation">
+                <option value="deposit">Depósito</option>
+                <option value="withdraw">Saque</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Insira o Valor:</label>
+            <input type="number" class="form-control" id="amount" placeholder="Informe o valor" value="0">
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="performOperation()">Executar</button>
+
+        <div class="mt-4" id="result"></div>
+
+        <ul id="historyList">
+            <!-- Listar o histórico das operações nesta lista -->
+        </ul>
+    </div>
+
+    <script>
+        let balanceValue = 0;
+        let history = [];
+
+        function performOperation() {
+    let operation = document.getElementById('operation').value;
+    let amount = parseFloat(document.getElementById('amount').value);
+
+    if (isNaN(amount) || amount <= 0) {
+        alert('Por favor, insira um valor válido.');
+        return;
+    }
+
+    let operationLabel = operation === 'deposit' ? 'Depósito' : 'Saque';
+
+    if (operation === 'deposit') {
+        balanceValue += amount;
+    } else if (operation === 'withdraw') {
+        if (amount > balanceValue) {
+            alert('Saldo insuficiente para saque.');
+            return;
+        }
+        balanceValue -= amount;
+    }
+
+    document.getElementById('balance').innerText = `R$ ${balanceValue.toFixed(2)}`;
+    alert(`Operação escolhida: ${operationLabel}, Valor: R$ ${amount.toFixed(2)}`);
+
+    // Adiciona a operação ao histórico com a classe CSS apropriada
+    history.push({ operation: operationLabel, amount, type: operation });
+    updateHistoryList();
+}
+
+
+        function updateHistoryList() {
+            let historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            for (let i = history.length - 1; i >= 0; i--) {
+            let listItem = document.createElement('li');
+            listItem.classList.add(history[i].type);
+            listItem.innerText = `Operação: ${history[i].operation}, Valor: R$ ${history[i].amount.toFixed(2)}`;
+            historyList.appendChild(listItem);
+        }
+    }
+    </script>
+</body>
+</html>
